@@ -319,8 +319,16 @@ textarea {
 
 details {
   display: block;
-}
+  transition: opacity 1s ease-out;
+  opacity: 0;
+  overflow: hidden;
 
+}
+/*
+.popup_is-animated{
+  transition: opacity 1s ease-out;
+  opacity: 0;
+}
 /*
  * Add the correct display in all browsers.
  */
