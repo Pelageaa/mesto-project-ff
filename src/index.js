@@ -21,15 +21,27 @@ function openImage(link, name) {
   openPopup(popupImage);
 }
 
+// Функция заполнения полей формы редактирования профиля
+function fillProfilePopup() {
+  const profileName = document.querySelector(".profile__title").textContent;
+  const profileJob = document.querySelector(
+    ".profile__description"
+  ).textContent;
+
+  nameInput.value = profileName;
+  jobInput.value = profileJob;
+}
+
 // Обработчики для кнопок открытия и закрытия попапов
 window.onload = () => {
   const editButton = document.querySelector(".profile__edit-button");
   const addButton = document.querySelector(".profile__add-button");
   const closeButtons = document.querySelectorAll(".popup__close");
 
-  editButton.addEventListener("click", () =>
-    openPopup(document.querySelector(".popup_type_edit"))
-  );
+  editButton.addEventListener("click", () => {
+    fillProfilePopup();
+    openPopup(document.querySelector(".popup_type_edit"));
+  });
   addButton.addEventListener("click", () => openPopup(popupNewCard));
 
   closeButtons.forEach((button) => {
@@ -47,7 +59,7 @@ initialCards.forEach((cardData) => {
 
 // @todo: Обработчик события submit для формы добавления новой карточки
 formNewCard.addEventListener("submit", function (evt) {
-  evt.preventDefault();
+  evt.preventDefault(); // Отменяем стандартную отправку формы
 
   // Получаем значения полей формы
   const name = inputCardName.value;
@@ -56,7 +68,6 @@ formNewCard.addEventListener("submit", function (evt) {
   // Создаем объект данных для новой карточки
   const newCardData = { link, name };
 
-  // Создаем новую карточку
   const newCardElement = createCard(
     newCardData,
     deleteButton,
@@ -64,16 +75,14 @@ formNewCard.addEventListener("submit", function (evt) {
     openImage
   );
 
-  // Добавляем новую карточку в начало списка
   cardList.prepend(newCardElement);
 
-  // Очищаем поля формы
   formNewCard.reset();
 
-  // Закрываем попап после добавления новой карточки
   closePopup(popupNewCard);
 });
 
+// Находим форму редактирования профиля
 const formEditProfile = document.querySelector(".popup_type_edit .popup__form");
 const nameInput = formEditProfile.querySelector(".popup__input_type_name");
 const jobInput = formEditProfile.querySelector(
@@ -86,6 +95,7 @@ function handleProfileFormSubmit(evt) {
 
   const nameValue = nameInput.value;
   const jobValue = jobInput.value;
+
   const profileName = document.querySelector(".profile__title");
   const profileJob = document.querySelector(".profile__description");
 
