@@ -14,6 +14,14 @@
   margin-top: 48px;
 }
 
+.popup__error_visible{
+  visibility: visible;
+  color: #ff0000;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 12px;
+  text-decoration: none;
+}
+
 .popup__button:hover {
   background: rgba(0, 0, 0, 0.8);
   cursor: pointer;

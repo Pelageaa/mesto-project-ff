@@ -13,3 +13,9 @@
   position: relative;
   overflow: hidden;
 }
+
+.card .like-card {
+  display: flex;
+  align-items: center;
+  column-gap: 4px;
+}
