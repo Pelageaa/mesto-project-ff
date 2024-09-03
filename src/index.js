@@ -2,7 +2,7 @@ import "./pages/index.css";
 import { openPopup, closePopup } from "./components/modal.js";
 import { createCard, handleLike, deleteButton } from "./components/card.js";
 import { enableValidation, clearValidation } from "./components/validation.js";
-import { getUserData, getCards, postNewCardServer, newData, newAvatar } from "./components/api.js";
+import { getUserData, getCards, postNewCardServer, updateNewData, addnewAvatar } from "./components/api.js";
 
 // @todo: DOM узлы
 const cardList = document.querySelector(".places__list");
@@ -45,11 +45,8 @@ function openImage(link, name) {
 
 // Функция заполнения полей формы редактирования профиля
 function fillProfilePopup() {
-  const profileName = document.querySelector(".profile__title").textContent;
-  const profileJob = document.querySelector(".profile__description").textContent;
-
-  nameInput.value = profileName;
-  jobInput.value = profileJob;
+  nameInput.value = profileNameElement.textContent;
+  jobInput.value = profileJobElement.textContent;
 }
 
 // Функция изменения текста кнопки
@@ -60,12 +57,9 @@ function setButtonText(button, isLoading) {
 Promise.all([getUserData(), getCards()])
   .then(([userData, cards]) => {
     // Обновление данных профиля
-    if (profileNameElement && profileJobElement && profileAvatarElement) {
-      profileNameElement.textContent = userData.name;
-      profileJobElement.textContent = userData.about;
-      profileAvatarElement.style.background = `url('${userData.avatar}') center center`;
-      profileAvatarElement.style.backgroundSize = 'cover';
-    }
+    profileNameElement.textContent = userData.name;
+    profileJobElement.textContent = userData.about;
+    profileAvatarElement.style.backgroundImage = `url('${userData.avatar}')`;
 
     // Вывод начальных карточек
     cards.forEach((cardData) => {
@@ -85,11 +79,12 @@ window.onload = () => {
 
   editButton.addEventListener("click", () => {
     fillProfilePopup();
-    clearValidation(formEditProfile, validationConfig); // Очищаем ошибки валидации при открытии попапа
+    clearValidation(formEditProfile, validationConfig);
     openPopup(document.querySelector(".popup_type_edit"));
   });
+
   addButton.addEventListener("click", () => {
-    clearValidation(formNewCard, validationConfig); // Очищаем ошибки валидации при открытии попапа
+    clearValidation(formNewCard, validationConfig);
     openPopup(popupNewCard);
   });
 
@@ -104,7 +99,7 @@ window.onload = () => {
 
 // Обработчик события submit для формы добавления новой карточки
 formNewCard.addEventListener("submit", function (evt) {
-  evt.preventDefault(); // Отменяем стандартную отправку формы
+  evt.preventDefault();
   const submitButton = evt.submitter;
   setButtonText(submitButton, true);
 
@@ -134,7 +129,7 @@ function handleProfileFormSubmit(evt) {
   const nameValue = nameInput.value;
   const jobValue = jobInput.value;
 
-  newData(nameValue, jobValue)
+  updateNewData(nameValue, jobValue)
     .then((userData) => {
       profileNameElement.textContent = userData.name;
       profileJobElement.textContent = userData.about;
@@ -153,15 +148,21 @@ formEditProfile.addEventListener("submit", handleProfileFormSubmit);
 // Обработчик события submit для формы редактирования аватара
 formEditAvatar.addEventListener("submit", function (evt) {
   evt.preventDefault();
+  const submitButton = evt.submitter;
+  setButtonText(submitButton, true);
+
   const link = inputAvatarLink.value;
 
-  newAvatar(link).then((newUserData) => {
+  addnewAvatar(link).then((newUserData) => {
+    profileAvatarElement.style.backgroundImage = `url('${newUserData.avatar}')`;
     formEditAvatar.reset();
-    updateUserData(newUserData);
     clearValidation(formEditAvatar, validationConfig);
     closePopup(popupEditAvatar);
   }).catch((error) => {
     console.error('Ошибка при изменении аватара:', error);
+  })
+  .finally(() => {
+    setButtonText(submitButton, false);
   });
 });
 
