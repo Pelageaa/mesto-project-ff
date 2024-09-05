@@ -1,4 +1,4 @@
-import { addLikeCard, deleteLike} from "./api";
+import { addLikeCard, deleteLike, deleteCard} from "./api";
 export function createCard(
   cardData,
   deleteButtonHandler,
@@ -21,7 +21,7 @@ export function createCard(
 
   const isOwner = owner._id === userId;
   if (isOwner) {
-    deleteButton.addEventListener("click", () => deleteButtonHandler(card));
+    deleteButton.addEventListener("click", () => deleteButtonHandler(card, _id)); 
   } else {
     card.removeChild(deleteButton);
   }
@@ -60,6 +60,12 @@ export function handleLike(likeButton, cardId, likesCountContainer) {
   }
 }
 
-export function deleteButton(cardElement) {
-  cardElement.remove();
+export function deleteButton(cardElement, cardId) {
+  deleteCard(cardId)
+    .then(() => {
+      cardElement.remove();
+    })
+    .catch((error) => {
+      console.error("Ошибка при удалении карты:", error);
+    });
 }
